@@ -1,113 +1,117 @@
+// Custom Scripts for Primal Template //
 
-// google map
-var map = '';
-var center;
+jQuery(function($) {
+    "use strict";
 
-function initialize() {
-    var mapOptions = {
-      zoom: 16,
-      center: new google.maps.LatLng(40.7679619,-73.9800172),
-      scrollwheel: false
-    };
-  
-    map = new google.maps.Map(document.getElementById('map-canvas'),  mapOptions);
 
-    google.maps.event.addDomListener(map, 'idle', function() {
-        calculateCenter();
-    });
-  
-    google.maps.event.addDomListener(window, 'resize', function() {
-        map.setCenter(center);
-    });
-}
+        // get the value of the bottom of the #main element by adding the offset of that element plus its height, set it as a variable
+        var mainbottom = $('#main').offset().top;
 
-function calculateCenter() {
-  center = map.getCenter();
-}
+        // on scroll,
+        $(window).on('scroll',function(){
 
-function loadGoogleMap(){
-    var script = document.createElement('script');
-    script.type = 'text/javascript';
-    script.src = 'https://maps.googleapis.com/maps/api/js?v=3.exp&sensor=false&' + 'callback=initialize';
-    document.body.appendChild(script);
-}
-
-// Flexslider
-$(function(){
-  /* FlexSlider */
-  $('.flexslider').flexslider({
-      animation: "fade",
-      directionNav: false
-  });
-
-  new WOW().init();
-
-  loadGoogleMap();
-});
-
-// isotope
-jQuery(document).ready(function($){
-
-  if ( $('.iso-box-wrapper').length > 0 ) { 
-
-      var $container  = $('.iso-box-wrapper'), 
-        $imgs     = $('.iso-box img');
-
-      $container.imagesLoaded(function () {
-
-        $container.isotope({
-        layoutMode: 'fitRows',
-        itemSelector: '.iso-box'
-        });
-
-        $imgs.load(function(){
-          $container.isotope('reLayout');
-        })
+        // we round here to reduce a little workload
+        stop = Math.round($(window).scrollTop());
+        if (stop > mainbottom) {
+            $('.navbar').addClass('past-main');
+            $('.navbar').addClass('effect-main')
+        } else {
+            $('.navbar').removeClass('past-main');
+       }
 
       });
 
-      //filter items on button click
-      $('.filter-wrapper li a').click(function(){
 
-          var $this = $(this), filterValue = $this.attr('data-filter');
+  // Collapse navbar on click
 
-      $container.isotope({ 
-        filter: filterValue,
-        animationOptions: { 
-            duration: 750, 
-            easing: 'linear', 
-            queue: false, 
-        }                
-      });             
+   $(document).on('click.nav','.navbar-collapse.in',function(e) {
+    if( $(e.target).is('a') ) {
+    $(this).removeClass('in').addClass('collapse');
+   }
+  });
 
-      // don't proceed if already selected 
-      if ( $this.hasClass('selected') ) { 
-        return false; 
+
+
+    /*-----------------------------------
+    ----------- Scroll To Top -----------
+    ------------------------------------*/
+
+    $(window).scroll(function () {
+      if ($(this).scrollTop() > 1000) {
+          $('#back-top').fadeIn();
+      } else {
+          $('#back-top').fadeOut();
       }
+    });
+    // scroll body to 0px on click
+    $('#back-top').on('click', function () {
+      $('#back-top').tooltip('hide');
+      $('body,html').animate({
+          scrollTop: 0
+      }, 1500);
+      return false;
+    });
 
-      var filter_wrapper = $this.closest('.filter-wrapper');
-      filter_wrapper.find('.selected').removeClass('selected');
-      $this.addClass('selected');
 
-        return false;
-      }); 
 
-  }
 
+
+  /*-------- Owl Carousel ---------- */
+    $(".reviews").owlCarousel({
+
+    slideSpeed : 200,
+    items: 1,
+    singleItem: true,
+    autoPlay : true,
+    pagination : false
+    });
+
+
+  /* ------ Clients Section Owl Carousel ----- */
+
+    $(".clients").owlCarousel({
+    slideSpeed : 200,
+    items: 5,
+    singleItem: false,
+    autoPlay : true,
+    pagination : false
+    });
+
+
+  /* ------ jQuery for Easing min -- */
+
+    $(function() {
+    $('a.page-scroll').bind('click', function(event) {
+        var $anchor = $(this);
+        $('html, body').stop().animate({
+            scrollTop: $($anchor.attr('href')).offset().top
+        }, 1500, 'easeInOutExpo');
+        event.preventDefault();
+    });
+  });
+
+
+
+/* --------- Wow Init ------ */
+
+  new WOW().init();
+
+
+  /* ----- Counter Up ----- */
+
+$('.counter').counterUp({
+		delay: 10,
+		time: 1000
 });
 
-// Hide mobile menu after clicking on a link
-    $('.navbar-collapse a').click(function(){
-        $(".navbar-collapse").collapse('hide');
+
+/*----- Preloader ----- */
+
+    $(window).load(function() {
+  		setTimeout(function() {
+        $('#loading').fadeOut('slow', function() {
+        });
+      }, 3000);
     });
 
-//jQuery for page scrolling feature - requires jQuery Easing plugin
-    $(function() {
-        $('.navbar-default a, a,').bind('click', function(event) {
-            var $anchor = $(this);
-            $('html, body').stop().animate({
-                scrollTop: $($anchor.attr('href')).offset().top - 68
-            }, 1000);
-            event.preventDefault();
-        });
-    });
+});
